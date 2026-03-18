@@ -26,7 +26,15 @@ public class LivroRepository
             var result = await _session.Connection.QueryFirstAsync<int>(sql, parameters, null);
             return result;
         }
-    }    
+    }
+    public async Task<IEnumerable<LivroEntity>> Listar()
+    {
+        const string sql = "SELECT id, titulo, autor, isbn FROM Livros";
+        using (var connection = _session.Connection)
+        {
+            return await connection.QueryAsync<LivroEntity>(sql);
+        }
+    }
 
     public async Task MarcarComoIndisponivel(int idLivro)
     {

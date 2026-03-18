@@ -1,4 +1,5 @@
 ﻿using BibliotecaApi.Application.Api.Responses;
+using BibliotecaApi.Domain.Entities;
 using BibliotecaApi.UseCases.Livro;
 using BibliotecaApi.UseCases.Livro.DTO;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +12,8 @@ namespace BibliotecaApi.Application.Api.Controllers;
 public class LivroController : Controller
 {
     private readonly CadastrarLivroUC _cadastrarLivroUC = new CadastrarLivroUC();
+    private readonly ListarLivrosUC _listarLivrosUC = new ListarLivrosUC();
 
- 
     [HttpPost]
     [SwaggerOperation(Summary = "Adiciona uma nova categoria retornando o seu respectivo Id")]
     [SwaggerResponse(StatusCodes.Status201Created, Type = typeof(ApiResponse<int>))]
@@ -30,5 +31,21 @@ public class LivroController : Controller
             return BadRequest(ApiResponse<int>.Falha(ex.Message));
         }
 
+    }
+
+    [HttpGet]
+    [SwaggerOperation(Summary = "Retorna a lista completa de livros cadastrados")]
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ApiResponse<IEnumerable<LivroEntity>>))]
+    public async Task<IActionResult> Listar()
+    {
+        try
+        {
+            var livros = await _listarLivrosUC.Execute();
+            return Ok(ApiResponse<IEnumerable<LivroEntity>>.Ok(livros));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResponse<IEnumerable<LivroEntity>>.Falha(ex.Message));
+        }
     }
 }
