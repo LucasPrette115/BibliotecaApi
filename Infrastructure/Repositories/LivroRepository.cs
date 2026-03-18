@@ -26,7 +26,7 @@ public class LivroRepository
             var result = await _session.Connection.QueryFirstAsync<int>(sql, parameters, null);
             return result;
         }
-    }
+    }    
 
     public async Task MarcarComoIndisponivel(int idLivro)
     {
@@ -38,6 +38,12 @@ public class LivroRepository
     {
         const string sql = "UPDATE Livros SET disponivel = TRUE WHERE id = @id";
         await _session.Connection.ExecuteAsync(sql, new { id = idLivro });
+    }
+
+    public async Task<bool> EstaDisponivel(int idLivro)
+    {
+        const string sql = "SELECT disponivel FROM Livros WHERE id = @id";
+        return await _session.Connection.ExecuteScalarAsync<bool>(sql, new { id = idLivro });
     }
 
 }

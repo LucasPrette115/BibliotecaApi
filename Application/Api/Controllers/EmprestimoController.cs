@@ -24,6 +24,10 @@ public class EmprestimoController : Controller
             int idEmprestimo = await _cadastrarEmprestimoUC.Execute(input);
             return Ok(ApiResponse<int>.Ok(idEmprestimo));
         }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<int?>.Falha(ex.Message));
+        }
         catch (Exception ex)
         {
             return BadRequest(ApiResponse<int>.Falha("Erro ao registrar empréstimo: " + ex.Message));

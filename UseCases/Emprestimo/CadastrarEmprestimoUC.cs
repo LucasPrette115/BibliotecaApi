@@ -11,21 +11,17 @@ public class CadastrarEmprestimoUC
 
     public async Task<int> Execute(CadastrarEmprestimoInputDTO input)
     {
-        try
-        {
-            var emprestimo = new EmprestimoEntity();
-            emprestimo.Cadastrar(input.IdUsuario, input.IdLivro, input.DataPrevistaDevolucao);
+        var emprestimo = new EmprestimoEntity();
+        emprestimo.Cadastrar(input.IdUsuario, input.IdLivro, input.DataPrevistaDevolucao);
 
-            int idEmprestimo = await _emprestimoRepository.Cadastrar(emprestimo);
+        if (!await _livroRepository.EstaDisponivel(input.IdLivro))
+            throw new InvalidOperationException("Este livro já está emprestado e ainda não foi devolvido.");
 
-            // Marca o livro como indisponível
-            await _livroRepository.MarcarComoIndisponivel(input.IdLivro);
+        int idEmprestimo = await _emprestimoRepository.Cadastrar(emprestimo);
 
-            return idEmprestimo;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Erro ao cadastrar empréstimo: " + ex.Message);
-        }
+        // Marca o livro como indisponível
+        await _livroRepository.MarcarComoIndisponivel(input.IdLivro);
+
+        return idEmprestimo;
     }
 }
