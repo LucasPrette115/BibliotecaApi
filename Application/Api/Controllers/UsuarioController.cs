@@ -24,6 +24,10 @@ public class UsuarioController : Controller
             int newId = await _cadastrarUsuarioUC.Execute(input);
             return Ok(ApiResponse<int>.Ok(newId));
         }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<int?>.Falha(ex.Message));
+        }
         catch (Exception ex)
         {
             return BadRequest(ApiResponse<int>.Falha("Erro ao cadastrar usuário: " + ex.Message));
