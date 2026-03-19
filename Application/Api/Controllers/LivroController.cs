@@ -2,6 +2,7 @@
 using BibliotecaApi.Domain.Entities;
 using BibliotecaApi.UseCases.Livro;
 using BibliotecaApi.UseCases.Livro.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -14,6 +15,7 @@ public class LivroController : Controller
     private readonly CadastrarLivroUC _cadastrarLivroUC = new CadastrarLivroUC();
     private readonly ListarLivrosUC _listarLivrosUC = new ListarLivrosUC();
 
+    [Authorize]
     [HttpPost]
     [SwaggerOperation(Summary = "Adiciona uma nova categoria retornando o seu respectivo Id")]
     [SwaggerResponse(StatusCodes.Status201Created, Type = typeof(ApiResponse<int>))]

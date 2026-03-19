@@ -1,11 +1,13 @@
 ﻿using BibliotecaApi.Application.Api.Responses;
 using BibliotecaApi.UseCases.Emprestimo;
 using BibliotecaApi.UseCases.Emprestimo.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace BibliotecaApi.Application.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]/[action]")]
 public class EmprestimoController : Controller

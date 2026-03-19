@@ -1,4 +1,9 @@
-using MinimalApplication.Infrastructure.IOC;
+using BibliotecaApi.Api.OptionsSetup;
+using BibliotecaApi.Infrastructure.IOC;
+using BibliotecaApi.OptionsSetup;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+
 // Ensure the SQLitePCLRaw.bundle_green package is installed in your project.
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,11 +21,43 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Biblioteca API",
         Version = "v1"
     });
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter '{token}'",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+
+    var securityRequirement = new OpenApiSecurityRequirement
+    {
+        {
+            securityScheme,
+            Array.Empty<string>()
+        }
+    };
+    c.AddSecurityRequirement(securityRequirement);
+
     //c.SwaggerGeneratorOptions = new()
     //{
     //    OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0
     //};
 }); ;
+
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -37,6 +74,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

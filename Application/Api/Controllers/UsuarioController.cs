@@ -10,7 +10,13 @@ namespace BibliotecaApi.Application.Api.Controllers;
 [Route("[controller]/[action]")]
 public class UsuarioController : Controller
 {
-    private readonly CadastrarUsuarioUC _cadastrarUsuarioUC = new CadastrarUsuarioUC();
+    private readonly CadastrarUsuarioUC _cadastrarUsuarioUC;
+    private readonly LoginUsuarioUC _loginUsuarioUC;
+    public UsuarioController(CadastrarUsuarioUC cadastrarUsuarioUC, LoginUsuarioUC loginUsuarioUC)
+    {
+        _cadastrarUsuarioUC = cadastrarUsuarioUC;
+        _loginUsuarioUC = loginUsuarioUC;
+    }
 
     [HttpPost]
     [SwaggerOperation(Summary = "Cadastra um novo usuário retornando o seu respectivo Id")]
@@ -31,6 +37,27 @@ public class UsuarioController : Controller
         catch (Exception ex)
         {
             return BadRequest(ApiResponse<int>.Falha("Erro ao cadastrar usuário: " + ex.Message));
+        }
+    }
+
+    [HttpPost]
+    [SwaggerOperation(Summary = "Realiza login retornando o token JWT")]
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ApiResponse<string>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Login([FromBody] LoginUsuarioInputDTO input)
+    {
+        try
+        {
+            var token = await _loginUsuarioUC.Execute(input);
+            return Ok(ApiResponse<string>.Ok(token));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Unauthorized(ApiResponse<string>.Falha(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResponse<string>.Falha("Erro ao realizar login: " + ex.Message));
         }
     }
 }

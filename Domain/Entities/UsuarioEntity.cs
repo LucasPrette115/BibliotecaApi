@@ -7,8 +7,9 @@ public class UsuarioEntity
     public string CPF { get; private set; }
     public string Email { get; private set; }
     public bool PossuiAtraso { get; set; }
+    public string? SenhaHash { get; private set; }
 
-    public void Cadastrar(string nome, string cpf, string email)
+    public void Cadastrar(string nome, string cpf, string email, string senhaHash)
     {
         if (string.IsNullOrWhiteSpace(nome))
             throw new Exception("O nome do usuário é obrigatório.");
@@ -22,5 +23,6 @@ public class UsuarioEntity
         Nome = nome.Trim();
         CPF = cpf.Trim();
         Email = email?.Trim();
+        SenhaHash = senhaHash;
     }
 }
