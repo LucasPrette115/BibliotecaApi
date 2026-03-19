@@ -31,6 +31,18 @@ public class UsuarioRepository
         }
     }
 
+    public async Task MarcarAtraso(int idUsuario)
+    {
+        const string sql = "UPDATE Usuarios SET possui_atraso = TRUE WHERE id = @id";
+        await _session.Connection.ExecuteAsync(sql, new { id = idUsuario });
+    }
+
+    public async Task LimparAtraso(int idUsuario)
+    {
+        const string sql = "UPDATE Usuarios SET possui_atraso = FALSE WHERE id = @id";
+        await _session.Connection.ExecuteAsync(sql, new { id = idUsuario });
+    }
+
     public async Task<bool> CpfExiste(string cpf)
     {
         const string sql = "SELECT COUNT(1) FROM Usuarios WHERE cpf = @cpf";

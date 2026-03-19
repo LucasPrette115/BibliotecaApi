@@ -9,7 +9,7 @@ public class DevolverEmprestimoUC
 {
     private readonly EmprestimoRepository _emprestimoRepository = new EmprestimoRepository();
     private readonly LivroRepository _livroRepository = new LivroRepository();
-
+    private readonly UsuarioRepository _usuarioRepository = new UsuarioRepository();
     public async Task<string> Execute(DevolverEmprestimoInputDTO input)
     {
         try
@@ -26,9 +26,11 @@ public class DevolverEmprestimoUC
 
             await _emprestimoRepository.Atualizar(emprestimo);
 
-            int idEmprestimo = await _emprestimoRepository.Cadastrar(emprestimo);
+            int idEmprestimo = await _emprestimoRepository.Cadastrar(emprestimo);            
 
             await _livroRepository.MarcarComoDisponivel(emprestimo.IdLivro);
+
+            await _usuarioRepository.LimparAtraso(emprestimo.IdUsuario);
 
             return $"Empréstimo devolvido com sucesso. Multa: R${emprestimo.Multa:F2}, Total a pagar: R${emprestimo.Total:F2}";
         }
