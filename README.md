@@ -37,7 +37,7 @@ dotnet run
 
 A API estará disponível em: `http://localhost:5023`
 
-Acesse o Swagger em: `https://localhost:5023/swagger`
+Acesse o Swagger em: `http://localhost:5023/swagger`
 
 ---
 
